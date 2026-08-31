@@ -42,7 +42,3 @@ jobs:
         with:
           name: package-apk
           path: bin/*.apk
-
-        git add .github/workflows/build.yml
-git commit -m "fix: corrige nome do pacote libsdl2-mixer-dev no workflow"
-git push origin main
