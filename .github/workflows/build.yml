@@ -8,17 +8,27 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Baixar o código
+      - name: Baixar o código do repositório
         uses: actions/checkout@v4
 
-      - name: Compilar APK com Buildozer
-        uses: ArtemSydoryk/buildozer-action@v1
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v5
         with:
-          command: buildozer -v android debug
-          subfolder: .
+          python-version: '3.10'
+
+      - name: Instalar dependências do sistema e Buildozer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev openjdk-17-jdk ccache zip unzip
+          python -m pip install --upgrade pip
+          pip install buildozer "cython<3.0.0"
+
+      - name: Compilar APK com o Buildozer
+        run: |
+          yes | buildozer -v android debug
 
       - name: Salvar o APK gerado
         uses: actions/upload-artifact@v4
