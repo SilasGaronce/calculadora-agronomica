@@ -5,12 +5,12 @@ package.domain = org.meuapp
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
-requirements = python3==3.11.5,kivy==master
+requirements = python3==3.10.12,kivy==2.3.0
 orientation = portrait
 fullscreen = 0
 android.api = 33
 android.minapi = 24
-android.ndk = 26b
+android.ndk = 25b
 android.ndk_api = 24
 android.accept_sdk_license = True
 android.entrypoint = org.kivy.android.PythonActivity
