@@ -11,7 +11,6 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelHeader
 from kivy.core.window import Window
 
-# Adjust window size for desktop testing (Android handles this automatically)
 Window.softinput_mode = "below_target"
 
 # ==========================================================
@@ -28,11 +27,9 @@ class CalculadoraAgronomicaApp(App):
     def build(self):
         self.title = "Sistema de Interpretação de Solo"
         
-        # Main Tabbed Panel
         self.panel = TabbedPanel(do_default_tab=False)
         self.panel.tab_width = 130
         
-        # Tabs Creation
         self.tab1 = TabbedPanelHeader(text="1. Físico")
         self.tab2 = TabbedPanelHeader(text="2. Química")
         self.tab3 = TabbedPanelHeader(text="3. Micros/Sub")
@@ -100,12 +97,13 @@ class CalculadoraAgronomicaApp(App):
         self.tab1.content = scroll
 
     def atualizar_v2_padrao(self, spinner, text):
-        if text == "Café":
-            self.inputs["V2"].text = "70.0"
-        elif text == "Pastagem":
-            self.inputs["V2"].text = "50.0"
-        else:
-            self.inputs["V2"].text = "60.0"
+        if hasattr(self, 'inputs') and "V2" in self.inputs:
+            if text == "Café":
+                self.inputs["V2"].text = "70.0"
+            elif text == "Pastagem":
+                self.inputs["V2"].text = "50.0"
+            else:
+                self.inputs["V2"].text = "60.0"
 
     # ------------------------------------------------------
     # TAB 2: QUÍMICA
@@ -119,7 +117,6 @@ class CalculadoraAgronomicaApp(App):
         self.add_row(layout, "C.O. (%):", "CO", "1.5")
         self.add_row(layout, "Fósforo - P (mg/dm³):", "P", "15")
         
-        # Unidade do K
         layout.add_widget(Label(text="Unidade do K:", size_hint_y=None, height=40))
         k_box = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
         self.btn_k_mg = ToggleButton(text="mg/dm³", group="unid_k", state="down")
@@ -130,7 +127,6 @@ class CalculadoraAgronomicaApp(App):
         
         self.add_row(layout, "Valor de K:", "K_lido", "60")
         
-        # Unidade Ca/Mg
         layout.add_widget(Label(text="Unidade Ca/Mg:", size_hint_y=None, height=40))
         camg_box = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
         self.btn_camg_cmol = ToggleButton(text="cmolc/dm³", group="unid_camg", state="down")
@@ -158,7 +154,6 @@ class CalculadoraAgronomicaApp(App):
         layout = GridLayout(cols=2, spacing=10, padding=10, size_hint_y=None)
         layout.bind(minimum_height=layout.setter('height'))
         
-        # Header Micros
         lbl_micros = Label(text="-- MICRONUTRIENTES --", size_hint_y=None, height=30, bold=True)
         layout.add_widget(lbl_micros)
         layout.add_widget(Label(text="", size_hint_y=None, height=30))
@@ -169,7 +164,6 @@ class CalculadoraAgronomicaApp(App):
         self.add_row(layout, "Manganês (Mn):", "val_Mn", "n")
         self.add_row(layout, "Zinco (Zn):", "val_Zn", "n")
         
-        # Header Subsolo
         lbl_sub = Label(text="-- SUBSOLO --", size_hint_y=None, height=30, bold=True)
         layout.add_widget(lbl_sub)
         layout.add_widget(Label(text="", size_hint_y=None, height=30))
@@ -249,17 +243,17 @@ class CalculadoraAgronomicaApp(App):
     # ------------------------------------------------------
     def processar_calculos(self, instance=None):
         try:
-            argila = self.parse_val(self.inputs["argila"].text, 20.0)
-            pH = self.parse_val(self.inputs["pH"].text, 5.5)
-            CO = self.parse_val(self.inputs["CO"].text, 1.0)
-            P = self.parse_val(self.inputs["P"].text, 0.0)
+            argila = self.parse_val(self.inputs["argila"].text, 35.0) or 35.0
+            pH = self.parse_val(self.inputs["pH"].text, 5.5) or 5.5
+            CO = self.parse_val(self.inputs["CO"].text, 0.0) or 0.0
+            P = self.parse_val(self.inputs["P"].text, 0.0) or 0.0
             
-            K_lido_val = self.parse_val(self.inputs["K_lido"].text, 0.0)
+            K_lido_val = self.parse_val(self.inputs["K_lido"].text, 0.0) or 0.0
             is_k_mg = self.btn_k_mg.state == "down"
             K_cmolc = K_lido_val / FATOR_K_MG_CMOLC if is_k_mg else K_lido_val
             
-            Ca_lido_val = self.parse_val(self.inputs["Ca_lido"].text, 0.0)
-            Mg_lido_val = self.parse_val(self.inputs["Mg_lido"].text, 0.0)
+            Ca_lido_val = self.parse_val(self.inputs["Ca_lido"].text, 0.0) or 0.0
+            Mg_lido_val = self.parse_val(self.inputs["Mg_lido"].text, 0.0) or 0.0
             is_camg_mmol = self.btn_camg_mmol.state == "down"
             
             if is_camg_mmol:
@@ -275,7 +269,7 @@ class CalculadoraAgronomicaApp(App):
             Al = self.parse_val(self.inputs["Al"].text, 0.0) or 0.0
             H_Al = self.parse_val(self.inputs["H_Al"].text, 0.0) or 0.0
 
-            MO = (CO or 0.0) * FATOR_CO_MO
+            MO = CO * FATOR_CO_MO
             N_est_kg = MO * FATOR_N_MIN
             
             SB = Ca + Mg + K_cmolc + Na
@@ -305,8 +299,8 @@ class CalculadoraAgronomicaApp(App):
             elif argila < 60.0: fator_Y = 2.0
             else: fator_Y = 3.0
 
-            PRNT = self.parse_val(self.inputs["PRNT"].text, 90.0)
-            V2 = self.parse_val(self.inputs["V2"].text, 60.0)
+            PRNT = self.parse_val(self.inputs["PRNT"].text, 90.0) or 90.0
+            V2 = self.parse_val(self.inputs["V2"].text, 60.0) or 60.0
             
             NC_V = ((V2 - V1) * T_potencial) / PRNT if V2 > V1 else 0.0
             
@@ -323,8 +317,8 @@ class CalculadoraAgronomicaApp(App):
             is_metodo_al = self.btn_met_al.state == "down"
             NC_final = NC_Al if is_metodo_al else NC_V
 
-            prof_inc_val = self.parse_val(self.inputs["prof_inc"].text, 20.0)
-            area_aplic_val = self.parse_val(self.inputs["area_aplic"].text, 100.0)
+            prof_inc_val = self.parse_val(self.inputs["prof_inc"].text, 20.0) or 20.0
+            area_aplic_val = self.parse_val(self.inputs["area_aplic"].text, 100.0) or 100.0
             
             NC_final = NC_final * (prof_inc_val / 20.0) * (area_aplic_val / 100.0)
 
