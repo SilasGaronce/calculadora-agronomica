@@ -22,11 +22,7 @@ jobs:
 
       - name: Compile APK with Buildozer
         run: |
-          buildozer -v android debug
-
-      - name: Upload Finished APK
-        uses: actions/upload-artifact@v4
-        with:
+          yes | buildozer -v android debug
           name: calculadora-agronomica-apk
           path: bin/*.apk
 
