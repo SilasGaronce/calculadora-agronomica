@@ -5,16 +5,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          command: buildozer -v android debug
-          repository_root: .
+          python-version: '3.10'
 
-      - name: Upload APK Artifact
+      - name: Install Buildozer and Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython==0.29.33
+          sudo apt-get update
+          sudo apt-get install -y libffi-dev libssl-dev openjdk-17-jdk
+
+      - name: Compile APK with Buildozer
+        run: |
+          buildozer -v android debug
+
+      - name: Upload Finished APK
         uses: actions/upload-artifact@v4
         with:
           name: calculadora-agronomica-apk
           path: bin/*.apk
+
