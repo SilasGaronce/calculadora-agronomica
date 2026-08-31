@@ -20,9 +20,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libffi-dev libssl-dev openjdk-17-jdk
 
+      - name: Setup Android SDK Licenses
+        run: |
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          echo -e "\n2446a3e67d83e26163d646e148db4de23a71350d\n28a00b5433d941bc4d97e88ffc73dbca68f6bdf1" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+
       - name: Compile APK with Buildozer
         run: |
-          yes | buildozer -v android debug
-          name: calculadora-agronomica-apk
-          path: bin/*.apk
-
+          buildozer -v android debug
