@@ -16,3 +16,7 @@ android.archs = arm64-v8a
 android.accept_sdk_license = True
 android.entrypoint = org.kivy.android.PythonActivity
 android.enable_androidx = True
+
+[buildozer]
+log_level = 2
+warn_on_root = 1
