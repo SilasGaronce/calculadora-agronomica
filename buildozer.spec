@@ -5,8 +5,13 @@ package.domain = org.meuapp
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ttf,otf
 version = 0.1
-requirements = python3, kivy==2.3.0, charset-normalizer
-p4a.branch = master
+
+# Deixamos as dependências limpas para o Buildozer alinhar com as receitas estáveis do Android
+requirements = python3, kivy, charset-normalizer
+
+# Mudado de master para develop para carregar as correções automáticas de compilação do freetype/SDL2
+p4a.branch = develop
+
 orientation = portrait
 fullscreen = 0
 android.api = 33
