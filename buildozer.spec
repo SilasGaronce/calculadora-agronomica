@@ -5,7 +5,7 @@ package.domain = org.meuapp
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ttf,otf
 version = 0.1
-requirements = python3,kivy,charset-normalizer
+requirements = python3==3.11.9, kivy, charset-normalizer
 orientation = portrait
 fullscreen = 0
 android.api = 33
