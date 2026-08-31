@@ -47,8 +47,7 @@ jobs:
       - name: Build with Buildozer
         run: |
           export MAKEFLAGS="-j$(nproc)"
-          # O parâmetro p4a.branch=master garante o uso da receita de build atualizada e estável
-          buildozer -v android debug --p4a.branch=master
+          buildozer -v android debug
         env:
           ACCEPT_BUILD_NDK_LICENSES: "1"
 
